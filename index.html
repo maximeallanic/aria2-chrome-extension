@@ -1,0 +1,209 @@
+<!doctype html>
+<html ng-app="downloader">
+
+<!-- {{{ head -->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link id="favicon" rel="shortcut icon" type="image/png" href="/icon/16.png" />
+  <title>Téléchargements</title>
+
+  <link rel="stylesheet" href="js/bower_components/angular-material/angular-material.min.css">
+  <link rel="stylesheet" href="js/bower_components/angular-material-icons/angular-material-icons.css">
+  <link rel="stylesheet" href="css/main.css">
+
+
+  <!-- external javascript dependencies -->
+  <script src="js/bower_components/jquery/dist/jquery.min.js"></script>
+  <script src="js/bower_components/svg-morpheus/compile/minified/svg-morpheus.js"></script>
+  <script src="js/bower_components/angular/angular.min.js"></script>
+  <script src="js/bower_components/angular-aria/angular-aria.min.js"></script>
+  <script src="js/bower_components/angular-animate/angular-animate.min.js"></script>
+  <script src="js/bower_components/angular-material-icons/angular-material-icons.min.js"></script>
+  <script src="js/bower_components/angular-material/angular-material.min.js"></script>
+
+  <script src="js/node_modules/httpclient/bundle.js"></script>
+  <script src="js/node_modules/aria2/bundle.js"></script>
+
+  <script src="js/app.js"></script>
+  <script src="js/service/list.js"></script>
+  <script src="js/service/animation.js"></script>
+  <script src="js/filter/humanize.js"></script>
+  <script src="js/controller.js"></script>
+
+
+</head>
+  <body ng-controller="MainCtrl" layout="column" class="ng-cloak">
+    <md-toolbar class="md-hue-2 md-whiteframe-11dp">
+      <div class="md-toolbar-tools">
+        <h2>
+          <span>Téléchargements</span>
+        </h2>
+        <span flex></span>
+        <md-select ng-model="options['max-overall-download-limit']" class="md-no-underline" ng-change="setOption()">
+          <md-option ng-value="'0'">Illimité <ng-md-icon icon="file_download" size="20"></md-icon>
+          </md-option>
+            <md-option ng-repeat="i in ['1000', '5000', '10000', '50000', '100000']" ng-value="i">
+              {{ ::i | humanize:"byte" }}/s <ng-md-icon icon="file_download" size="20"></md-icon>
+            </md-option>
+        </md-select>
+        <md-select ng-model="options['max-overall-upload-limit']" class="md-no-underline" ng-change="setOption()">
+          <md-option ng-value="'0'">Illimité <ng-md-icon icon="file_upload" size="20"></md-icon>
+          </md-option>
+            <md-option ng-repeat="i in ['1000', '5000', '10000', '50000', '100000']" ng-value="i">
+              {{ ::i | humanize:"byte" }}/s <ng-md-icon icon="file_upload" size="20"></md-icon>
+            </md-option>
+        </md-select>
+        <!--md-menu>
+          <md-button ng-click="$mdOpenMenu($event)">
+            {{ options['max-overall-download-limit'] > 0 ? (options['max-overall-download-limit'] | humanize) + "/s" : 'Illimité' }}
+            <ng-md-icon icon="file_download"></md-icon>
+          </md-button>
+          <md-menu-content>
+            <md-menu-item ng-repeat="i in [0, 1000, 5000, 10000, 50000, 100000]">
+              <md-button ng-click="setOption('max-overall-download-limit', i)">
+                {{ i > 0 ? i | humanize : "Illimité" }}/s
+              </md-button>
+            </md-menu-item>
+          </md-menu-content>
+        </md-menu-->
+        <md-menu>
+          <md-button class="md-icon-button" ng-click="$mdOpenMenu($event)">
+            <ng-md-icon icon="more_vert" size="20"></md-icon>
+          </md-button>
+          <md-menu-content>
+            <md-menu-item>
+              <md-button ng-click="toggleAll()">
+                <ng-md-icon ng-attr-icon="{{ !isAllPaused() ? 'pause' : 'play_arrow' }}" md-menu-align-target></ng-md-icon>
+                {{ !isAllPaused() ? "Mettre en Pause" : "Tout télécharger" }}
+              </md-button>
+            </md-menu-item>
+            <md-menu-item>
+              <md-button ng-click="removeAllFinished()">
+                <ng-md-icon icon="delete" md-menu-align-target></ng-md-icon>
+                Tout Effacer
+              </md-button>
+            </md-menu-item>
+            <md-menu-item>
+              <md-button ng-click="showOptions()">
+                <ng-md-icon icon="settings" md-menu-align-target></ng-md-icon>
+                Paramètre
+              </md-button>
+            </md-menu-item>
+
+          </md-menu-content>
+        </md-menu>
+      </div>
+    </md-toolbar>
+    <div id="listDownload" flex>
+      <div class="card-support" ng-repeat="item in list | filter:searchInput | filter:{status: '!removed'} | orderBy: [{status: 'active'}, {status: 'complete'}] track by item.gid">
+        <md-card
+          class="item md-whiteframe-1dp {{ item.status }}"
+          ng-init="expand[item.gid] = false"
+          item="{{ ::item.gid }}">
+          <md-card-content>
+            <div layout="row" layout-align="space-around stretch">
+              <div layout="column" layout-align="space-between start" class="left">
+                <ng-md-icon icon="file" size="32"></ng-md-icon>
+              </div>
+              <div layout="column" flex layout-align="end start" class="center">
+                <h3 ng-bind="getName(item)" ng-click="openFile(item)"></h3>
+                <a ng-bind="getUrl(item)" ng-if="item.files[0].uris.length > 0" ng-click="retry(item)"></a>
+                <span class="subinfo">
+                  <span ng-if="item.status == 'active'">
+                    <ng-md-icon icon="file_download" size="16"></ng-md-icon> {{ item.downloadSpeed | humanize:"byte" }}o/s
+                  </span>
+                  <span ng-if="item.hasOwnProperty('bittorrent') && item.status == 'active'">
+                    - <ng-md-icon icon="file_upload" size="16"></ng-md-icon> {{ item.uploadSpeed | humanize:"byte" }}o/s
+                  </span>
+                  <span ng-if="item.status != 'complete'">
+                    - {{ item.completedLength | humanize:"byte" }}o sur
+                  </span>
+                  <span>
+                    {{ item.totalLength | humanize:"byte" }}o
+                  </span>
+                  <span ng-if="item.downloadSpeed > 0">
+                    - {{ (item.totalLength - item.completedLength) / item.downloadSpeed | humanize:"time" }}
+                  </span>
+                  <span ng-if="item.status == 'error'" ng-switch="item.errorCode" class="error">
+                    <i ng-switch-when="1">Erreur Inconnu</i>
+                    <i ng-switch-when="2">Erreur de temps écoulé</i>
+                    <i ng-switch-when="3">Resource Non Disponible</i>
+                    <i ng-switch-when="4">Resource Non Disponible (2)</i>
+                    <i ng-switch-when="5">Téléchargement trop lent</i>
+                    <i ng-switch-when="6">Erreur de Réseau</i>
+                    <i ng-switch-default>Erreur</i>
+                  </span>
+                </span>
+                <md-progress-linear
+                  ng-if="item.status != 'complete'"
+                  ng-attr-md-mode="{{ item.status == 'waiting' ? 'indeterminate' : 'determinate' }}"
+                  md-mode="determinate"
+                  value="{{ item.completedLength / item.totalLength * 100 }}"
+                  class="{{ item.status }}">
+                </md-progress-linear>
+                <div layout="row" class="control">
+                  <md-button ng-click="toggleItem(item)" ng-if="item.status != 'error' && item.status != 'complete'">
+                   {{ item.status == 'active' ? 'Pause' : 'Reprendre' }}
+                 </md-button>
+                </div>
+
+              </div>
+              <div layout="column" layout-align="space-between start" class="right">
+                 <md-button ng-click="remove(item)" class="md-icon-button remove">
+                  <ng-md-icon icon="clear" options='{"rotation": "none"}' size="18"></md-icon>
+                </md-button>
+                <!--md-menu>
+                  <md-button class="md-icon-button" ng-click="$mdOpenMenu($event)">
+                    <ng-md-icon icon="more_vert"></md-icon>
+                  </md-button>
+                  <md-menu-content>
+                    <md-menu-item ng-if="item.status =='error'">
+                      <md-button ng-click="retry(item)">
+                        Réessayer
+                      </md-button>
+                    </md-menu-item>
+                    <md-menu-item>
+                      <label>Limite de Téléchargement</label>
+                      <md-input-container>
+
+                        <input required type="number" step="any" name="rate" ng-model="project.rate" min="800"
+                               max="4999" ng-pattern="/^1234$/" />
+                      </md-input-container>
+                    </md-menu-item>
+                  </md-menu-content>
+                </md-menu>
+                <md-button ng-click="expand[item.gid] = !expand[item.gid]" class="md-icon-button" ng-if="item.bittorrent">
+                  <ng-md-icon icon="{{ expand[item.gid] ? 'arrow_drop_up' : 'arrow_drop_down' }}" options='{"rotation": "none"}'></md-icon>
+                </md-button-->
+              </div>
+            </div>
+            <div ng-if="expand[item.gid]" class="info slide-down">
+              <div ng-if="item.bittorrent">
+                <md-tabs md-dynamic-height md-border-bottom md-enable-disconnect>
+                  <md-tab label="Fichier">
+                    <md-content class="md-padding">
+                      <md-list-item class="md-3-line" ng-repeat="file in item.files" ng-click="null" layout="row">
+                       <md-progress-circular flex="20" md-mode="determinate" value="{{ file.completedLength / file.length * 100 }}"></md-progress-circular>
+                       <div class="md-list-item-text" layout="column" flex="80">
+                         <h3 ng-bind="file.path.split('/').reverse()[0]"></h3>
+                         <i>{{ (file.completedLength / file.length * 100) | number:2 }}%</i>
+                       </div>
+                     </md-list-item>
+                    </md-content>
+                  </md-tab>
+                  <!--md-tab label="Annonceur">
+                    <md-content class="md-padding">
+                      <h3 ng-repeat="announce in item.bittorrent.announceList"  ng-repeat="announceItem in announce" ng-bind="announceItem"></h3>
+                    </md-content>
+                  </md-tab-->
+                </md-tabs>
+              </div>
+            </div>
+          </md-card-content>
+        </md-card>
+      </div>
+    </div>
+  </body>
+</html>

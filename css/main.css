@@ -1,0 +1,196 @@
+/**
+* @Author: Maxime Allanic <mallanic>
+* @Date:   22/08/2016
+* @Email:  maxime@allanic.me
+* @Last modified by:   mallanic
+* @Last modified time: 07/09/2016
+*/
+
+
+
+html {
+  overflow: hidden;
+}
+
+body {
+  height: 100vh;
+  min-height: 100vh;
+  font-family: Roboto,Helvetica Neue,sans-serif !important;
+  font-size: 15px;
+  background-color: #eee;
+}
+
+.ng-cloak {
+  opacity: 0;
+}
+
+md-toolbar {
+  max-height: 56px;
+  min-height: 56px;
+}
+
+md-toolbar > *{
+  max-height: 56px;
+  height: 56px;
+}
+md-toolbar * {
+  font-size: 16px;
+}
+
+md-toolbar md-input-container {
+  margin: 29px 0 0 0;
+  color: white;
+}
+
+md-toolbar md-input-container input,  md-toolbar md-input-container label{
+  color: white !important;
+}
+
+md-toolbar md-select {
+  margin: 0;
+}
+
+md-toolbar md-select:not([disabled]):focus .md-select-value {
+  color: white;
+}
+
+.item {
+  margin: 10px 20%;
+  transition: all 0.5s;
+  opacity: 1;
+}
+
+.item.remove_waiting {
+  transition: all 5s;
+  transform: scale(0.5);
+  filter: grayscale(1);
+  background-color: grey;
+}
+
+.item.error {
+  color: #999;
+  text-decoration: line-through;
+}
+
+.item .error {
+  font-weight: bold;
+  padding: 0 20px;
+  text-decoration: none;
+}
+.item i {
+  padding: 10px;
+}
+
+.item h3 {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  width: 100%;
+  font-size: 0.9em;
+  color: rgb(51, 103, 214);
+  font-weight: normal;
+  font-size: 14px;
+  margin: 3px 0;
+}
+
+.item a {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  font-size: 13px;
+  width: 100%;
+  color: #999;
+  margin: 3px 0 17px;
+  cursor: pointer;
+}
+
+#listDownload {
+  overflow: auto;
+}
+md-progress-linear.complete .md-bar{
+  background-color: #616161;
+}
+
+md-progress-linear.stopped .md-bar{
+  background-color: #33FFFF;
+}
+
+md-progress-linear.waiting .md-bar{
+  background-color: #999;
+}
+
+button[disabled] {
+  opacity: 0;
+}
+
+.item .info {
+  transition: all 0.2s;
+  position: relative;
+}
+
+.item > md-card-content {
+  padding: 2px;
+}
+
+.item .left {
+  padding: 20px 30px 20px 20px;
+  border-right: 1px solid #ccc;
+}
+
+.item .center {
+  padding: 5px 16px;
+}
+
+.item .center .subinfo {
+  color: #616161;
+  margin: 10px 0px;
+}
+.item .center .subinfo ng-md-icon {
+  margin: 0;
+  height: 16px;
+  width: 16px;
+}
+
+.item .right button {
+  margin: 0;
+}
+
+.item .right ng-md-icon > svg {
+  color: #999;
+}
+
+.item .control {
+  margin: 5px 0 0 0;
+}
+
+.item .control > *:first-child {
+  color: rgb(51, 103, 214);
+}
+
+.card-support {
+  overflow-y: hidden;
+}
+
+.card-support > .item {
+  height: auto;
+}
+
+md-dialog#options {
+  padding: 20px;
+  width: 80%;
+}
+
+/** Banner **/
+
+.banner .card-support {
+  width: 350px;
+}
+
+.banner .card-support .item {
+  margin: 5px 10px;
+  height: 90px;
+}
+
+.banner .item .left {
+    padding: 20px 5px 20px 6px;
+}

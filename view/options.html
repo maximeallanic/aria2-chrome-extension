@@ -1,0 +1,10 @@
+<md-dialog aria-label="List dialog" id="options">
+  <md-dialog-content>
+    <div layout="column">
+      <md-input-container ng-repeat="(name, value) in options">
+        <label>{{ name }}</label>
+        <input type="text" ng-model="options[name]" ng-change="setOption()"/>
+      </md-input-container>
+    </div>
+  </md-dialog-content>
+</md-dialog>
