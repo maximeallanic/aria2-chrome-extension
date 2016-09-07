@@ -20,7 +20,7 @@ close.onclick = function () {
 }
 
 var iframe = document.createElement('iframe');
-iframe.src = chrome.extension.getURL("banner.html");
+iframe.src = chrome.extension.getURL("view/banner.html");
 
 div.appendChild(close);
 div.appendChild(iframe);

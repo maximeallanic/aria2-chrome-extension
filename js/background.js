@@ -51,7 +51,7 @@
           if (tab.url == "chrome://downloads/") {
             console.log(tab);
             chrome.tabs.update(tab.id, {
-              url: chrome.extension.getURL("index.html")
+              url: chrome.extension.getURL("view/index.html")
             });
           }
         }
