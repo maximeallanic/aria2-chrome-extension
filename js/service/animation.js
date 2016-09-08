@@ -3,7 +3,7 @@
 * @Date:   22/08/2016
 * @Email:  maxime@allanic.me
 * @Last modified by:   mallanic
-* @Last modified time: 06/09/2016
+* @Last modified time: 08/09/2016
 */
 
 
@@ -58,7 +58,7 @@
     cardSupport.$inject = ["$animateCss"];
     function cardSupport($animateCss) {
       return {
-        enter: function (element, done) {
+        /*enter: function (element, done) {
           $animateCss(element, {
             from: {
               'max-height': 0,
@@ -89,34 +89,77 @@
             easing: "ease-in-out"
           });
         },
-        /*move: function (element, done) {
+        move: function (container, done) {
+          console.log("move", container);
+          var item = container.find('.item');
+          var parent = container.parent();
+
+          var itemProperty = {
+            start: {
+              left: container.prop('offsetLeft'),
+              top: container.prop('offsetTop'),
+              width: item.width(),
+              height: item.height(),
+              position: 'absolute'
+            }
+          };
+          var containerProperty = {
+            start: {
+              'max-height': container.height()
+            },
+            end: {
+              'max-height': 0
+            }
+          };
+/**
+          item.css(itemProperty.start);
+          parent.prepend(item);
+          $animateCss(item, {
+            from: itemProperty.start,
+            to: {
+              left: itemProperty.start.width
+            }
+          });
+
+          $animateCss(container, {
+            from: containerProperty.start,
+            to: containerProperty.end,
+            duration: 1
+          }).start().then(function () {
+            done();
+            $animateCss(container, {
+              from: containerProperty.end,
+              to: containerProperty.start,
+              duration: 1
+            }).start();
+          });
+          return ;
           var parent = element.parent();
           var height = element.height();
-          element.css({heigh: height});
-          var item = element.find('.item');
-          var offsetLeft = element.prop('offsetLeft');
-          var offsetTop = element.prop('offsetTop');
-          parent.prepend(item);
-          item.css({
-            'position': 'absolute',
-            'left': offsetLeft,
-            'top': offsetTop
+          var width = element.width();
+          element.css({
+            height: height
           });
-          return function () {
-            $animateCss({
-              from: {
-                'left': offsetLeft,
-                'top': offsetTop
-              },
-              to: {
-                left: element.prop('offsetLeft'),
-                top: element.prop('offsetTop')
-              },
-              duration: 1
-            }).promise.then(function () {
-              element.prepend(item);
-            });
-          };
+          var item = element.find('.item');
+
+
+
+          item.css(itemProperty);
+          done();
+          $animateCss(item, {
+            from: {
+              'left': itemProperty.left,
+              'top': itemProperty.top
+            },
+            to: {
+              left: element.prop('offsetLeft'),
+              top: element.prop('offsetTop')
+            },
+            duration: 1000
+          }).start().then(function () {
+            console.log("end");
+            element.prepend(item);
+          });
         }*/
       };
     }

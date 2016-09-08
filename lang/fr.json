@@ -1,0 +1,28 @@
+{
+  "main": {
+    "title": "Téléchargements",
+    "all_download": "Tout Télécharger",
+    "all_delete": "Tout Supprimer",
+    "all_paused": "Tout Mettre en Pause",
+    "settings": "Paramètre",
+    "item": {
+      "resume": "Reprendre",
+      "pause": "Pause",
+      "download_speed": "{DOWNLOAD_SPEED}o/s",
+      "upload_speed": "{UPLOAD_SPEED}o/s",
+      "completed": "{STATUS, select, complete{} other{{COMPLETED}o sur }}{TOTAL}o"
+    },
+    "time": {
+      "year": "{year, select, 0{} 1{1 Année} other{{year} Années}}",
+      "month": "{month, select, 0{0 Mois} 1{1 Mois} other{{month} Mois}}",
+      "day": "{day, select, 0{0 Jour} 1{1 Jour} other{{day} Jours}}",
+      "hour": "{hour, select, 0{0 Heure} 1{1 Heure} other{{hour} Heures}}",
+      "minute": "{minute, select, 0{0 Minute} 1{1 Minute} other{{minute} Minutes}}",
+      "second": "{second, select, 0{0 Seconde} 1{1 Seconde} other{{second} Secondes}}"
+    },
+    "option": {
+      "download": "{LIMIT, plural, =0{Illimité} other {{LIMIT}o/s}}",
+      "upload": "{LIMIT, plural, =0{Illimité} other {{LIMIT}o/s}}"
+    }
+  }
+}

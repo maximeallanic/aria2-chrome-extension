@@ -17,11 +17,15 @@
   <!-- external javascript dependencies -->
   <script src="/js/bower_components/jquery/dist/jquery.min.js"></script>
   <script src="/js/bower_components/svg-morpheus/compile/minified/svg-morpheus.js"></script>
+  <script src="/js/bower_components/messageformat/messageformat.js"></script>
   <script src="/js/bower_components/angular/angular.min.js"></script>
   <script src="/js/bower_components/angular-aria/angular-aria.min.js"></script>
   <script src="/js/bower_components/angular-animate/angular-animate.min.js"></script>
   <script src="/js/bower_components/angular-material-icons/angular-material-icons.min.js"></script>
   <script src="/js/bower_components/angular-material/angular-material.min.js"></script>
+  <script src="/js/bower_components/angular-translate/angular-translate.min.js"></script>
+  <script src="/js/bower_components/angular-translate-interpolation-messageformat/angular-translate-interpolation-messageformat.min.js"></script>
+  <script src="/js/bower_components/angular-translate-loader-static-files/angular-translate-loader-static-files.min.js"></script>
 
   <script src="/js/node_modules/httpclient/bundle.js"></script>
   <script src="/js/node_modules/aria2/bundle.js"></script>
@@ -34,9 +38,9 @@
 
 
 </head>
-  <body ng-controller="MainCtrl" layout="row" class="ng-cloak banner">
-    <div id="listDownload" layout="row">
-      <div class="card-support" ng-repeat="item in list | filter:searchInput | filter:{status: '!removed'} | orderBy: [{status: 'active'}, {status: 'complete'}] track by item.gid">
+  <body ng-controller="MainCtrl" layout="row" class="ng-cloak banner" layout-align="space-between center">
+    <div id="listDownload" layout="row" flex>
+      <div class="card-support" ng-repeat="item in list | filter:searchInput | filter:{status: '!removed'} | orderBy: [{status: 'active'}, {status: 'complete'}] | limitTo:getBannerLimit() track by item.gid">
         <md-card
           class="item md-whiteframe-1dp {{ item.status }}"
           ng-init="expand[item.gid] = false"
@@ -45,6 +49,7 @@
             <div layout="row" layout-align="space-around stretch">
               <div class="left">
                 <md-progress-circular
+                  md-diameter="20"
                   ng-attr-md-mode="{{ item.status == 'waiting' ? 'indeterminate' : 'determinate' }}"
                   md-mode="determinate"
                   value="{{ item.completedLength / item.totalLength * 100 }}"
@@ -54,15 +59,6 @@
               <div layout="column" flex layout-align="end start" class="center">
                 <h3 ng-bind="getName(item)" ng-click="openFile(item)"></h3>
                 <span class="subinfo">
-                  <span ng-if="item.status == 'active'">
-                    <ng-md-icon icon="file_download" size="16"></ng-md-icon> {{ item.downloadSpeed | humanize:"byte" }}o/s
-                  </span>
-                  <!--span ng-if="item.status != 'complete'">
-                    - {{ item.completedLength | humanize:"byte" }}o sur
-                  </span>
-                  <span>
-                    {{ item.totalLength | humanize:"byte" }}o
-                  </span-->
                   <span ng-if="item.downloadSpeed > 0">
                     - {{ (item.totalLength - item.completedLength) / item.downloadSpeed | humanize:"time" }}
                   </span>
@@ -81,56 +77,15 @@
                  <md-button ng-click="remove(item, false)" class="md-icon-button remove">
                   <ng-md-icon icon="clear" options='{"rotation": "none"}' size="18"></md-icon>
                 </md-button>
-                <!--md-menu>
-                  <md-button class="md-icon-button" ng-click="$mdOpenMenu($event)">
-                    <ng-md-icon icon="more_vert"></md-icon>
-                  </md-button>
-                  <md-menu-content>
-                    <md-menu-item ng-if="item.status =='error'">
-                      <md-button ng-click="retry(item)">
-                        Réessayer
-                      </md-button>
-                    </md-menu-item>
-                    <md-menu-item>
-                      <label>Limite de Téléchargement</label>
-                      <md-input-container>
-
-                        <input required type="number" step="any" name="rate" ng-model="project.rate" min="800"
-                               max="4999" ng-pattern="/^1234$/" />
-                      </md-input-container>
-                    </md-menu-item>
-                  </md-menu-content>
-                </md-menu>
-                <md-button ng-click="expand[item.gid] = !expand[item.gid]" class="md-icon-button" ng-if="item.bittorrent">
-                  <ng-md-icon icon="{{ expand[item.gid] ? 'arrow_drop_up' : 'arrow_drop_down' }}" options='{"rotation": "none"}'></md-icon>
-                </md-button-->
-              </div>
-            </div>
-            <div ng-if="expand[item.gid]" class="info slide-down">
-              <div ng-if="item.bittorrent">
-                <md-tabs md-dynamic-height md-border-bottom md-enable-disconnect>
-                  <md-tab label="Fichier">
-                    <md-content class="md-padding">
-                      <md-list-item class="md-3-line" ng-repeat="file in item.files" ng-click="null" layout="row">
-                       <md-progress-circular flex="20" md-mode="determinate" value="{{ file.completedLength / file.length * 100 }}"></md-progress-circular>
-                       <div class="md-list-item-text" layout="column" flex="80">
-                         <h3 ng-bind="file.path.split('/').reverse()[0]"></h3>
-                         <i>{{ (file.completedLength / file.length * 100) | number:2 }}%</i>
-                       </div>
-                     </md-list-item>
-                    </md-content>
-                  </md-tab>
-                  <!--md-tab label="Annonceur">
-                    <md-content class="md-padding">
-                      <h3 ng-repeat="announce in item.bittorrent.announceList"  ng-repeat="announceItem in announce" ng-bind="announceItem"></h3>
-                    </md-content>
-                  </md-tab-->
-                </md-tabs>
               </div>
             </div>
           </md-card-content>
         </md-card>
       </div>
+
     </div>
+    <md-button ng-click="openMainDownloadPage()" class="openAll">
+      Tout Afficher
+    </md-button>
   </body>
 </html>

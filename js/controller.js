@@ -3,10 +3,8 @@
 * @Date:   22/08/2016
 * @Email:  maxime@allanic.me
 * @Last modified by:   mallanic
-* @Last modified time: 07/09/2016
+* @Last modified time: 08/09/2016
 */
-
-
 
 (function () {
     'use strict';
@@ -143,6 +141,15 @@
 
       $scope.setOption = function () {
         $list.changeGlobalOption($scope.options);
+      }
+
+      $scope.openMainDownloadPage = function () {
+        var url = chrome.extension.getURL('view/index.html');
+        window.open(url).location.href = url;
+      };
+
+      $scope.getBannerLimit = function () {
+        return Math.floor(angular.element("#listDownload").width() / 350);
       }
 
       $scope.showOptions = function ($event) {

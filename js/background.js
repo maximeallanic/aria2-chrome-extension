@@ -3,7 +3,7 @@
 * @Date:   04/09/2016
 * @Email:  maxime@allanic.me
 * @Last modified by:   mallanic
-* @Last modified time: 07/09/2016
+* @Last modified time: 08/09/2016
 */
 
 
@@ -29,7 +29,7 @@
             && item.url.match(/^(http|ftp|magnet)/)
             && item.mime != "application/pdf") {
             findTab(item.referrer);
-            $list.addUri([item.url]);
+          //  $list.addUri([item.url]);
             chrome.downloads.cancel(item.id, function (t) {
               chrome.downloads.removeFile(item.id);
             });

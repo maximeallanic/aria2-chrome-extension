@@ -3,6 +3,7 @@
   "description":"Override Download Page with Aria2",
   "version":"0.1",
   "manifest_version":2,
+  "content_security_policy": "script-src 'self' 'sha256-/9dqPOIQEggtWud/wJk38wIsP477EB4PQ5m8z7J1/1k=' 'unsafe-eval'; object-src 'self'",
   "icons": {
     "16": "icon/16.png",
     "48": "icon/48.png",
@@ -19,7 +20,8 @@
     }
   ],
   "web_accessible_resources": [
-    "view/banner.html"
+    "view/banner.html",
+    "view/index.html"
   ],
   "permissions": [
    "downloads",
